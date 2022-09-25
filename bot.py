@@ -39,7 +39,9 @@ def get_image(searchstr):
     #     print(y[2], num)
     #     if str(y[2]) == str(num):
     #         print(1)
-    sheetsavailable = [y for y in [x for x in sheets if str(x[2]) == str(sheet)] if course.lower() in y[1].lower()]
+    sheetsavailable = [y for y in [x for x in sheets if str(x[2]) == str(sheet)] if course.lower() == y[1].lower()]
+    if not sheetsavailable:
+        sheetsavailable = [y for y in [x for x in sheets if str(x[2]) == str(sheet)] if course.lower() in y[1].lower()]
     sheet = sheetsavailable[0]
     img = fetch_question(fetch_sheet(sheet), int(num), ex, alias_data)
     return img
