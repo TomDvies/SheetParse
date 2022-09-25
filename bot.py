@@ -10,7 +10,7 @@ import json
 
 sheets = fetch_dampt()
 sheets += fetch_dpmms()
-print(sheets)
+# print(sheets)
 with open("aliasdata.json", "r") as f:
     alias_data = (json.loads(f.read()))
 
@@ -116,7 +116,6 @@ async def on_message(message):
         await message.channel.send(embed=embed)
         return
     if message.content.startswith('?q'):
-        print(1)
         try:
             if image:=get_image(message.content.split("?q ")[1]):
                 embed = discord.Embed(title=message.content.split("?q ")[1],

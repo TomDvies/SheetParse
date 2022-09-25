@@ -75,7 +75,7 @@ def fetch_question(filepath: str, q: int, type, alias_data) -> None:
    print("fetching")
    doc = fitz.open(filepath)
    start, end = get_start_end(doc,q,type,alias_data)
-   print(start,end)
+   # print(start,end)
    # if 1 page q
    if start[1] == end[1]:
       page = doc.load_page(start[1])
