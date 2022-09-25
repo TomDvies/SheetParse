@@ -17,7 +17,7 @@ if not os.path.exists('pdfs'):
    os.makedirs('pdfs')
 
 # sheetarr [url, name, number]
-def fetch_sheet(sheetarr: list[str]) -> str:
+def fetch_sheet(sheetarr) -> str:
    if not os.path.exists('pdfs'):
       os.makedirs('pdfs')
 
