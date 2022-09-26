@@ -32,7 +32,7 @@ def fetch_dpmms():
     for list in parsed_courses_list:
         for entry in list.find_all("li"):
             # filters weird courses like catam and VM
-            if ("www.dpmms.cam.ac.uk/study/" in str(entry.a["href"])) and (str(entry.a.contents[0]) != "Vectors and Matrices"):
+            if ("www.dpmms.cam.ac.uk/study/" in str(entry.a["href"])) and (str(entry.a.contents[0]) not in  ["Vectors and Matrices", "*Metric and Topological Spaces","*Analysis II"]):
                 courses.append([str(entry.a["href"]), entry.a.contents[0]])
     # print(courses)
     # course = courses[0]
