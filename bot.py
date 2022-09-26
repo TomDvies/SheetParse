@@ -10,6 +10,12 @@ import json
 
 sheets = fetch_dampt()
 sheets += fetch_dpmms()
+courses =[]
+for x in sheets:
+    if x[1] not in courses:
+        courses.append(x[1])
+print(courses)
+exit()
 # print(sheets)
 with open("aliasdata.json", "r") as f:
     alias_data = (json.loads(f.read()))
@@ -105,10 +111,22 @@ async def on_message(message):
             add_shortcut(string)
             fullname = string.split('"')[-2]
             shortname = string.split('"')[1]
-            embed = discord.Embed(title="Added shortcut:",
-                                  # description="Format requests as '?q IA 2011 2 II 12F'",
+            embed = discord.Embed(  # description="Format requests as '?q IA 2011 2 II 12F'",
                                   color=0x00ff00)
             embed.add_field(name="Added shortcut", value=str(f"{shortname} -> {fullname}"))
+            await message.channel.send(embed=embed)
+            return
+        except Exception as e:
+            print(e)
+        embed = discord.Embed(color=0x00ff00)
+        embed.add_field(name="Something went wrong.", value=str("Format requests as '?q coursename sheetnum questionnum'"))
+        await message.channel.send(embed=embed)
+        return
+    if message.content.startswith("?l"):
+        try:
+            embed = discord.Embed(title="Courses",                          # description="Format requests as '?q IA 2011 2 II 12F'",
+                                  color=0x00ff00)
+            embed.add_field(value=str(f"{' '.join(courses)}"))
             await message.channel.send(embed=embed)
             return
         except Exception as e:

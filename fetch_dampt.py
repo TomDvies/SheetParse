@@ -1,7 +1,7 @@
 import requests
 import pandas as pd # w/ lxml, html5lib
 import roman
-
+import re
 
 def placeholder1(arr, stri):
     for x in arr:
@@ -38,7 +38,9 @@ def fetch_dampt():
                     print(e)
                     print(f"number: {number}")
                     number = "1"
-            sheets.append([f"http://www.damtp.cam.ac.uk/user/examples/{sheet_primitive_arr[i][0]}.pdf",file_tuple[1],int(number)])
+            course = re.split("example sheet",str(file_tuple[1]).split(":")[0].split("sheet")[0],flags=re.IGNORECASE)[0].strip()
+            course = re.split("Equations sheet", course,flags=re.IGNORECASE)[0].strip()
+            sheets.append([f"http://www.damtp.cam.ac.uk/user/examples/{sheet_primitive_arr[i][0]}.pdf",course,int(number)])
     # i hate whoever did this
     sheets.append(["http://www.damtp.cam.ac.uk/user/examples/B6a.pdf", "Variational Principles",1])
     sheets.append(["http://www.damtp.cam.ac.uk/user/examples/B6b.pdf", "Variational Principles",2])
