@@ -14,6 +14,7 @@ courses =[]
 for x in sheets:
     if x[1] not in courses:
         courses.append(x[1])
+courses.sort()
 # print(courses)
 # exit()
 # print(sheets)
@@ -96,7 +97,6 @@ async def on_ready():
     print(client.user.id)
     print(discord.__version__)
     print('------')
-
     print('Servers connected to:')
     for guild in client.guilds:
         print(guild.name)
