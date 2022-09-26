@@ -46,7 +46,6 @@ def get_image(searchstr):
     img = fetch_question(fetch_sheet(sheet), int(num), ex, alias_data)
     return img
 
-get_image("grm 4 5")
 
 def add_shortcut(string):
     fullname = string.split('"')[-2]

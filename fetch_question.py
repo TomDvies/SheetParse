@@ -55,12 +55,12 @@ def get_start_end(doc, q, type, alias_data):
       text:str= page.get_text()
       starts = findall(text, startstr)
       ends = findall(text, endstr)
-      if not starts:
+      if starts:
+         start = [starts[0], x]
+      if ends:
+         end = [ends[0], x]
+      else:
          continue
-      start = [starts[0], x]
-      if not ends:
-         continue
-      end = [ends[0], x]
       return [start,end]
 
    end = [-1, len(doc)-1]
@@ -77,6 +77,7 @@ def fetch_question(filepath: str, q: int, type, alias_data) -> None:
    start, end = get_start_end(doc,q,type,alias_data)
    # print(start,end)
    # if 1 page q
+   print(start,end)
    if start[1] == end[1]:
       page = doc.load_page(start[1])
       text = page.get_text()
