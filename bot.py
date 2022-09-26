@@ -48,9 +48,10 @@ def get_image(searchstr):
     sheetsavailable = [y for y in [x for x in sheets if str(x[2]) == str(sheet)] if course.lower() == y[1].lower()]
     if not sheetsavailable:
         sheetsavailable = [y for y in [x for x in sheets if str(x[2]) == str(sheet)] if course.lower() in y[1].lower()]
-    sheet = sheetsavailable[0]
-    img = fetch_question(fetch_sheet(sheet), int(num), ex, alias_data)
-    return img
+    sheetl = sheetsavailable[0]
+    img = fetch_question(fetch_sheet(sheetl), int(num), ex, alias_data)
+    formalcourse = sheetl[1]
+    return img, formalcourse, num, sheet
 
 # get_image("opti 1 11")
 # exit()
@@ -124,27 +125,61 @@ async def on_message(message):
         return
     if message.content.startswith("?l"):
         try:
-            embed = discord.Embed(title="Courses",                          # description="Format requests as '?q IA 2011 2 II 12F'",
-                                  color=0x00ff00)
-            embed.add_field(value=str(f"{' '.join(courses)}"))
-            await message.channel.send(embed=embed)
-            return
+            if message.content.split("?l")[1].strip():
+                if message.content.split("?l")[1].strip() not in courses+[x[0] for x in alias_data["shortcuts"]]:
+                    embed = discord.Embed(color=0x00ff00)
+                    embed.add_field(name="Course not found", value=str("Format requests as '?l (coursename)'"))
+                    await message.channel.send(embed=embed)
+                    return
+                embed = discord.Embed(  # description="Format requests as '?q IA 2011 2 II 12F'",
+                    color=0x00ff00)
+                strs=""
+                for short, long in alias_data["shortcuts"]:
+                    print(short.lower())
+                    if message.content.split("?l")[1].strip().lower() in [long.lower(),short.lower()]:
+                        strs+=f"{short} -> {long}\n"
+                strs = strs.strip()
+                if not strs:
+                    strs = "No shortcuts set yet."
+                print(strs)
+                embed.add_field(name=f"Shortcuts for {message.content.split('?l')[1].strip()}",value=strs)
+                await message.channel.send(embed=embed)
+                return
+            else:
+                secs =[]
+                stsr=""
+                n=1024
+                for course in courses:
+                    if len(stsr)+len(", ")+len(course) >= n:
+                        secs.append(stsr.strip(", "))
+                        stsr=""
+                    else:
+                        stsr+=f", {course}"
+                if stsr:
+                    secs.append(stsr.strip(", "))
+                for i,section in enumerate(secs):
+                    # enumerate
+                    embed = discord.Embed(                          # description="Format requests as '?q IA 2011 2 II 12F'",
+                                          color=0x00ff00)
+                    embed.add_field(name=f"Courses ({i+1}/{len(secs)}):",value=section)
+                    await message.channel.send(embed=embed)
+                return
         except Exception as e:
             print(e)
         embed = discord.Embed(color=0x00ff00)
-        embed.add_field(name="Something went wrong.", value=str("Format requests as '?q coursename sheetnum questionnum'"))
+        embed.add_field(name="Something went wrong.", value=str("Format requests as '?l (coursename)'"))
         await message.channel.send(embed=embed)
         return
     if message.content.startswith('?q'):
         try:
-            if image:=get_image(message.content.split("?q ")[1]):
-                embed = discord.Embed(title=message.content.split("?q ")[1],
-                                      # description="Format requests as '?q IA 2011 2 II 12F'",
-                                      color=0x00ff00)
-                file = discord.File(fp=io.BytesIO(image), filename='SPOILER_.png')
-                embed.set_image(url="attachment://SPOILER_.png")
-                await message.channel.send(file=file, embed=embed)
-                return
+            image,name,num, sheetnum = get_image(message.content.split("?q ")[1])
+            embed = discord.Embed(title=f"{name}, sheet {sheetnum}, q{num}",
+                                  # description="Format requests as '?q IA 2011 2 II 12F'",
+                                  color=0x00ff00)
+            file = discord.File(fp=io.BytesIO(image), filename='SPOILER_.png')
+            embed.set_image(url="attachment://SPOILER_.png")
+            await message.channel.send(file=file, embed=embed)
+            return
         except Exception as e:
             print(e)
         embed = discord.Embed(color=0x00ff00)

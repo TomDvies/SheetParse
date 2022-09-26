@@ -77,7 +77,7 @@ def fetch_question(filepath: str, q: int, type, alias_data) -> None:
    start, end = get_start_end(doc,q,type,alias_data)
    # print(start,end)
    # if 1 page q
-   print(start,end)
+   # print(start,end)
    if start[1] == end[1]:
       page = doc.load_page(start[1])
       text = page.get_text()
