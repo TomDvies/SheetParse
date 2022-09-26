@@ -58,6 +58,13 @@ def get_image(searchstr):
 def add_shortcut(string):
     fullname = string.split('"')[-2]
     shortname = string.split('"')[1]
+    for i,x in enumerate(alias_data["shortcuts"]):
+        if x[0]==shortname:
+            alias_data["shortcuts"][i][1] = fullname
+            with open("aliasdata.json", "w") as f:
+                json_data = json.dumps(alias_data)
+                f.write(json_data)
+                return
     alias_data["shortcuts"].append([shortname,fullname])
     json_data = json.dumps(alias_data)
     with open("aliasdata.json", "w") as f:
