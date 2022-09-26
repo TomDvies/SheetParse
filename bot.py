@@ -14,8 +14,8 @@ courses =[]
 for x in sheets:
     if x[1] not in courses:
         courses.append(x[1])
-print(courses)
-exit()
+# print(courses)
+# exit()
 # print(sheets)
 with open("aliasdata.json", "r") as f:
     alias_data = (json.loads(f.read()))
