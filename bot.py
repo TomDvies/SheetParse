@@ -46,7 +46,8 @@ def get_image(searchstr):
     img = fetch_question(fetch_sheet(sheet), int(num), ex, alias_data)
     return img
 
-
+# get_image("opti 1 11")
+# exit()
 def add_shortcut(string):
     fullname = string.split('"')[-2]
     shortname = string.split('"')[1]

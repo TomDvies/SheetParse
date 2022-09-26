@@ -112,11 +112,13 @@ def fetch_question(filepath: str, q: int, type, alias_data) -> None:
          rectdict[0].include_rect(rectdict[rectd + 1])
 
       delta = fitz.Point(8, 3)
-      # deltay = fitz.Point(0, 4)
-      rectf = fitz.Rect(rectdict[0].tl - delta - deltay, rectdict[0].br + delta)
-      # page.get_pixmap(clip=rectf, dpi=300).save("out.png")
+      deltay = fitz.Point(0, 4)
+      topleft = fitz.Point(rectf.x0,(rectdict[0].tl - delta - deltay).y)
+      bottomright = fitz.Point(rectf.x1,(rectdict[0].br +delta).y)
+      rectf2 = fitz.Rect(topleft, bottomright)
 
-      img2 = page.get_pixmap(clip=rectf, dpi=300)
+
+      img2 = page.get_pixmap(clip=rectf2, dpi=300)
       col = 1  # tiles per row
       lin = 2 # tiles per column
       hgt = img1.height + img2.height #src.width * col  # width of target
@@ -133,6 +135,7 @@ def fetch_question(filepath: str, q: int, type, alias_data) -> None:
       src.copy(img1, (0,0,img1.irect.x1,img1.irect.y1))
       src.set_origin(0, -img1.height)
       src.copy(img2, (0,0,img2.irect.x1,img2.irect.y1))
+      src.save("out.png")
       return src.tobytes()
 
 if __name__ == "__main__":
