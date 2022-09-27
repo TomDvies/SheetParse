@@ -3,6 +3,10 @@ import pandas as pd # w/ lxml, html5lib
 import roman
 import re
 
+
+# DEPRECATED, use fetch_dampt2.py instead
+
+
 def placeholder1(arr, stri):
     for x in arr:
         if x in stri:
