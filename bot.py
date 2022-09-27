@@ -1,6 +1,6 @@
 # import discord
 from fetch_dpmms import fetch_dpmms
-from fetch_dampt import fetch_dampt
+from fetch_dampt2 import fetch_dampt
 from fetch_question import fetch_sheet, fetch_question
 import json
 #notes
@@ -18,9 +18,10 @@ courses.sort()
 # print(courses)
 # exit()
 # print(sheets)
-with open("aliasdata.json", "r") as f:
-    alias_data = (json.loads(f.read()))
-
+with open("shortcutsdata.json", "r") as f:
+    shortcuts = (json.loads(f.read()))
+with open("formatsdata.json", "r") as f:
+    formats = (json.loads(f.read()))
 
 
 # format: course sheetnum questionnum
@@ -28,13 +29,13 @@ def get_image(searchstr):
     splits = searchstr.split(" ")
     ex = ""
     course = " ".join(splits[0:-2])
-    for shortcut, longname in alias_data["shortcuts"]:
+    for shortcut, longname in shortcuts:
         if course.lower() == shortcut.lower():
             course=longname
-    for exception, code, sol in alias_data["exceptions"]:
-        if exception.lower() in course.lower():
-            ex = code
-            print("exception",ex)
+    # for exception, code, sol in formats:
+    #     if exception.lower() in course.lower():
+    #         ex = code
+    #         print("exception",ex)
     sheet = splits[-2]
     num = splits[-1]
     print()
@@ -50,7 +51,7 @@ def get_image(searchstr):
     if not sheetsavailable:
         sheetsavailable = [y for y in [x for x in sheets if str(x[2]) == str(sheet)] if course.lower() in y[1].lower()]
     sheetl = sheetsavailable[0]
-    img = fetch_question(fetch_sheet(sheetl), int(num), ex, alias_data)
+    img = fetch_question(fetch_sheet(sheetl), int(num), course,formats)
     formalcourse = sheetl[1]
     return img, formalcourse, num, sheet
 
@@ -59,15 +60,15 @@ def get_image(searchstr):
 def add_shortcut(string):
     fullname = string.split('"')[-2]
     shortname = string.split('"')[1]
-    for i,x in enumerate(alias_data["shortcuts"]):
+    for i,x in enumerate(shortcuts):
         if x[0]==shortname:
-            alias_data["shortcuts"][i][1] = fullname
-            with open("aliasdata.json", "w") as f:
-                json_data = json.dumps(alias_data)
+            shortcuts[i][1] = fullname
+            with open("shortcutsdata.json", "w") as f:
+                json_data = json.dumps(shortcuts)
                 f.write(json_data)
                 return
-    alias_data["shortcuts"].append([shortname,fullname])
-    json_data = json.dumps(alias_data)
+    shortcuts.append([shortname,fullname])
+    json_data = json.dumps(shortcuts)
     with open("aliasdata.json", "w") as f:
         f.write(json_data)
 
@@ -133,7 +134,7 @@ async def on_message(message):
     if message.content.startswith("?l"):
         try:
             if message.content.split("?l")[1].strip():
-                if message.content.split("?l")[1].strip() not in courses+[x[0] for x in alias_data["shortcuts"]]:
+                if message.content.split("?l")[1].strip() not in courses+[x[0] for x in shortcuts]:
                     embed = discord.Embed(color=0x00ff00)
                     embed.add_field(name="Course not found", value=str("Format requests as '?l (coursename)'"))
                     await message.channel.send(embed=embed)
@@ -141,7 +142,7 @@ async def on_message(message):
                 embed = discord.Embed(  # description="Format requests as '?q IA 2011 2 II 12F'",
                     color=0x00ff00)
                 strs=""
-                for short, long in alias_data["shortcuts"]:
+                for short, long in shortcuts:
                     print(short.lower())
                     if message.content.split("?l")[1].strip().lower() in [long.lower(),short.lower()]:
                         strs+=f"{short} -> {long}\n"

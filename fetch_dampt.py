@@ -24,7 +24,7 @@ def fetch_dampt():
     sheets = []
     passes = ["study sheet", "old syllabus"]
     for i,file_tuple in enumerate(sheet_primitive_arr):
-        if "sheet" in str(file_tuple[1]).lower():
+        if "sheet" in str(file_tuple[1]).lower() or "example" in str(file_tuple[1]).lower():
             if placeholder1(passes, str(file_tuple[1]).lower()):
                 continue
             number = str(file_tuple[1]).lower().split("sheet")[-1].strip()

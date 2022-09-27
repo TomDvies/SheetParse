@@ -33,18 +33,18 @@ def fetch_sheet(sheetarr) -> str:
    return filepath
 
 
-def get_start_end(doc, q, type, alias_data):
+def get_start_end(doc, q, course, formats):
    # fuck sheet formatting
    startstr = f"\n{q}."
    endstr = f"\n{q+1}."
    # if type == "grm":
    #    startstr = f"\n({q})"
    #    endstr = f"\n({q + 1})"
-   for arr in alias_data["exceptions"]:
-      if type == arr[1]:
-         print(f"newformat: {arr[2]}")
-         startstr = arr[2].replace("questionnum",str(q))
-         endstr = arr[2].replace("questionnum",str(q+1))
+   for arr in formats:
+      if course.lower() == arr[0].lower():
+         print(f"newformat: {arr[1]}")
+         startstr = arr[1].replace("questionnum",str(q))
+         endstr = arr[1].replace("questionnum",str(q+1))
 
    # bad and open to bugs but fine here
    def findall(full_string, sub_string):
@@ -68,13 +68,13 @@ def get_start_end(doc, q, type, alias_data):
 
 
 
-def fetch_question(filepath: str, q: int, type, alias_data) -> None:
+def fetch_question(filepath: str, q: int, course, formats) -> None:
 
    # input = "IA 2001 2 II 12F" example input
    # course, year, paper, section, question = input.split(" ")
    print("fetching")
    doc = fitz.open(filepath)
-   start, end = get_start_end(doc,q,type,alias_data)
+   start, end = get_start_end(doc,q,course,formats)
    # print(start,end)
    # if 1 page q
    # print(start,end)
