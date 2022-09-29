@@ -18,7 +18,7 @@ def fetch_sheets_for_dampt_course(code, course):
     for i, letr in enumerate(string.ascii_lowercase):
         if requests.head(f"http://www.damtp.cam.ac.uk/user/examples/{code}{letr}.pdf").status_code != 200:
             break
-        sheets.append([f"http://www.damtp.cam.ac.uk/user/examples/{code}{letr}.pdf",course,i+1])
+        sheets.append([f"http://www.damtp.cam.ac.uk/user/examples/{code}{letr}.pdf",course.strip(),i+1])
     return sheets
 
 

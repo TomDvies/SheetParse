@@ -67,34 +67,42 @@ def get_start_end(doc, q, course, formats):
    return [start,end]
 
 
+# cursed code, pymupdf cant parse text that includes "-\n" for some god forsaken reason
+# didn't open an issue but pls do
+# also probably will have a few lopsided qs if the - is the furthest thing on the right :)
+def get_rects(start, end, page):
+   text = page.get_text()[start:end]
+   textbits = text.split("-\n")
+   # print(textbits)
+   rectdict = []
+   for i, t2 in enumerate(textbits):
+      # some sheets like vp, i hate this
+      t = t2.strip("Copyright © 2022 University of Cambridge. Not to be quoted or reproduced without permission.")
+      print(t)
+      if page.search_for(t):
+         rectdict += page.search_for(t)
+   return rectdict
 
 def fetch_question(filepath: str, q: int, course, formats) -> None:
-
-   # input = "IA 2001 2 II 12F" example input
-   # course, year, paper, section, question = input.split(" ")
-   print("fetching")
    doc = fitz.open(filepath)
    start, end = get_start_end(doc,q,course,formats)
-   # print(start,end)
    # if 1 page q
-   # print(start,end)
    if start[1] == end[1]:
       page = doc.load_page(start[1])
       text = page.get_text()
-      rectdict = page.search_for(text[start[0]:end[0]])
+      rectdict = get_rects(start[0],end[0],page)
+      # rectdict = page.search_for(text[start[0]:end[0]])
       for rectd in range(len(rectdict) - 1):
          rectdict[0].include_rect(rectdict[rectd + 1])
-
       delta = fitz.Point(8, 3)
       deltay = fitz.Point(0, 4)
       rectf = fitz.Rect(rectdict[0].tl - delta -deltay, rectdict[0].br + delta)
-      # page.get_pixmap(clip=rectf, dpi=300).save("out.png")
-
+      page.get_pixmap(clip=rectf, dpi=300).save("out.png")
       return page.get_pixmap(clip=rectf, dpi=300).tobytes()
    else:
       page = doc.load_page(start[1])
       text = page.get_text()
-      rectdict = page.search_for(text[start[0]:-1])
+      rectdict = get_rects(start[0],-1,page)#page.search_for(text[start[0]:-1])
       for rectd in range(len(rectdict) - 1):
          rectdict[0].include_rect(rectdict[rectd + 1])
 
@@ -107,7 +115,7 @@ def fetch_question(filepath: str, q: int, course, formats) -> None:
 
       page = doc.load_page(end[1])
       text = page.get_text()
-      rectdict = page.search_for(text[0:end[0]])
+      rectdict = get_rects(0,end[0],page)#page.search_for(text[0:end[0]])
       for rectd in range(len(rectdict) - 1):
          rectdict[0].include_rect(rectdict[rectd + 1])
 
@@ -138,7 +146,29 @@ def fetch_question(filepath: str, q: int, course, formats) -> None:
       src.save("out.png")
       return src.tobytes()
 
+# other method, maybe better
+# def fetch_question_2(filepath: str, q: int, course, formats) -> None:
+#    print("fetching")
+#    # fuck sheet formatting, this allows for custom formats to be recognised, below is by far the most common
+#    startstr = f"\n{q}."
+#    endstr = f"\n{q + 1}."
+#    # if type == "grm":
+#    #    startstr = f"\n({q})"
+#    #    endstr = f"\n({q + 1})"
+#    for arr in formats:
+#       if course.lower() == arr[0].lower():
+#          print(f"newformat: {arr[1]}")
+#          startstr = arr[1].replace("questionnum", str(q))
+#          endstr = arr[1].replace("questionnum", str(q + 1))
+#
+#    doc:fitz.Document = fitz.open(filepath)
+#    for i, page in enumerate(doc):
+#       startrects = page.search_for(startstr)
+#       endrects  =  page.search_for(endstr)
+#
+#       print(endrects,startrects)
+
 if __name__ == "__main__":
-   sheet = ['http://www.dpmms.cam.ac.uk/study/IB/GroupsRings%2BModules/2021-2022/Example%20sheet%202.pdf', 'Analysis I ', 1]
+   sheet = ['http://www.damtp.cam.ac.uk/user/examples/B6b.pdf', 'VP', 2]
    # print(fetch_dpmms.fetch_dpmms()[0])
-   fetch_question(fetch_sheet(sheet),8,"grm")
+   fetch_question(fetch_sheet(sheet),7,sheet[1],[])

@@ -15,7 +15,7 @@ def fetch_dpmms_sheets_for_course(url:str, coursename:str):
         if str(entry.a["href"]).startswith("http") or str(entry.a["href"]).startswith("https") or str(entry.a["href"]).startswith("www"):
             sheets.append([str(entry.a["href"]), coursename, i+1])
         else:
-            sheets.append([urljoin(url,str(entry.a["href"])), coursename, i + 1])
+            sheets.append([urljoin(url,str(entry.a["href"])), coursename.strip(), i + 1])
 
     return sheets
 
