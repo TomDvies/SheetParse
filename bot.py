@@ -69,7 +69,7 @@ def add_shortcut(string):
                 return
     shortcuts.append([shortname,fullname])
     json_data = json.dumps(shortcuts)
-    with open("aliasdata.json", "w") as f:
+    with open("jsons/shortcutsdata.json", "w") as f:
         f.write(json_data)
 
 
