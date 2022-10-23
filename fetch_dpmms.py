@@ -12,10 +12,13 @@ def fetch_dpmms_sheets_for_course(url:str, coursename:str):
     sheets = []
     # assuming well ordered sheets pls be true
     for i, entry in enumerate(parsed_main.find_all("li")):
-        if str(entry.a["href"]).startswith("http") or str(entry.a["href"]).startswith("https") or str(entry.a["href"]).startswith("www"):
-            sheets.append([str(entry.a["href"]), coursename, i+1])
-        else:
-            sheets.append([urljoin(url,str(entry.a["href"])), coursename.strip(), i + 1])
+        try:
+            if str(entry.a["href"]).startswith("http") or str(entry.a["href"]).startswith("https") or str(entry.a["href"]).startswith("www"):
+                sheets.append([str(entry.a["href"]), coursename, i+1])
+            else:
+                sheets.append([urljoin(url,str(entry.a["href"])), coursename.strip(), i + 1])
+        except:
+            pass
 
     return sheets
 
