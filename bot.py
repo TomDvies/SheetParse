@@ -18,9 +18,9 @@ courses.sort()
 # print(courses)
 # exit()
 # print(sheets)
-with open("shortcutsdata.json", "r") as f:
+with open("jsons/shortcutsdata.json", "r") as f:
     shortcuts = (json.loads(f.read()))
-with open("formatsdata.json", "r") as f:
+with open("jsons/formatsdata.json", "r") as f:
     formats = (json.loads(f.read()))
 
 
@@ -63,7 +63,7 @@ def add_shortcut(string):
     for i,x in enumerate(shortcuts):
         if x[0]==shortname:
             shortcuts[i][1] = fullname
-            with open("shortcutsdata.json", "w") as f:
+            with open("jsons/shortcutsdata.json", "w") as f:
                 json_data = json.dumps(shortcuts)
                 f.write(json_data)
                 return
