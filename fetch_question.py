@@ -54,7 +54,12 @@ def get_start_end(doc, q, course, formats):
       page = doc.load_page(x)
       text:str= page.get_text()
       starts = findall(text, startstr)
+      if text.startswith(startstr.strip()):
+         starts+=[0]
       ends = findall(text, endstr)
+      print(startstr)
+      if text.startswith(endstr.strip()):
+         ends+=[0]
       if starts:
          start = [starts[0], x]
       if ends:
@@ -78,14 +83,15 @@ def get_rects(start, end, page):
    for i, t2 in enumerate(textbits):
       # some sheets like vp, i hate this
       t = t2.strip("Copyright © 2022 University of Cambridge. Not to be quoted or reproduced without permission.")
-      print(t)
       if page.search_for(t):
          rectdict += page.search_for(t)
    return rectdict
 
-def fetch_question(filepath: str, q: int, course, formats) -> None:
+def fetch_question(filepath: str, q: int, course, formats,debug=False) -> None:
    doc = fitz.open(filepath)
    start, end = get_start_end(doc,q,course,formats)
+   if debug:
+      print(start,end)
    # if 1 page q
    if start[1] == end[1]:
       page = doc.load_page(start[1])
@@ -97,7 +103,8 @@ def fetch_question(filepath: str, q: int, course, formats) -> None:
       delta = fitz.Point(8, 3)
       deltay = fitz.Point(0, 4)
       rectf = fitz.Rect(rectdict[0].tl - delta -deltay, rectdict[0].br + delta)
-      page.get_pixmap(clip=rectf, dpi=300).save("out.png")
+      if debug:
+         page.get_pixmap(clip=rectf, dpi=300).save("out.png")
       return page.get_pixmap(clip=rectf, dpi=300).tobytes()
    else:
       page = doc.load_page(start[1])
@@ -116,6 +123,11 @@ def fetch_question(filepath: str, q: int, course, formats) -> None:
       page = doc.load_page(end[1])
       text = page.get_text()
       rectdict = get_rects(0,end[0],page)#page.search_for(text[0:end[0]])
+      # hacky fix
+      if not rectdict:
+         if debug:
+            img1.save("out.png")
+         return img1.tobytes()
       for rectd in range(len(rectdict) - 1):
          rectdict[0].include_rect(rectdict[rectd + 1])
 
@@ -143,7 +155,8 @@ def fetch_question(filepath: str, q: int, course, formats) -> None:
       src.copy(img1, (0,0,img1.irect.x1,img1.irect.y1))
       src.set_origin(0, -img1.height)
       src.copy(img2, (0,0,img2.irect.x1,img2.irect.y1))
-      src.save("out.png")
+      if debug:
+         src.save("out.png")
       return src.tobytes()
 
 # other method, maybe better
@@ -169,6 +182,6 @@ def fetch_question(filepath: str, q: int, course, formats) -> None:
 #       print(endrects,startrects)
 
 if __name__ == "__main__":
-   sheet = ['http://www.damtp.cam.ac.uk/user/examples/B6b.pdf', 'VP', 2]
+   sheet = ['https://www.dpmms.cam.ac.uk/study/IB/LinearAlgebra/2022-2023/lin-alg-ex4-2022.pdf', 'VP', 2]
    # print(fetch_dpmms.fetch_dpmms()[0])
-   fetch_question(fetch_sheet(sheet),7,sheet[1],[])
+   fetch_question("pdfs/aHR0cDovL3d3dy5kcG1tcy5jYW0uYWMudWsvc3R1ZHkvSUIvTGluZWFyQWxnZWJyYS8yMDIyLTIwMjMvbGluLWFsZy1leDItMjAyMi5wZGY=.pdf",7,"La",[],debug=True)
