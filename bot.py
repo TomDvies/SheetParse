@@ -1,8 +1,12 @@
 # import discord
-from fetch_dpmms import fetch_dpmms
-from fetch_dampt2 import fetch_dampt
+# from fetch_dpmms import fetch_dpmms
+# from fetch_dampt2 import fetch_dampt
+import asyncio
+
 from fetch_question import fetch_sheet, fetch_question
 import json
+from cmsfetch.fetch_dpmms import fetch_dpmms
+from cmsfetch.fetch_dampt import fetch_dampt
 #notes
 # can match dampt by code, add extra command
 
@@ -72,7 +76,40 @@ def add_shortcut(string):
     with open("jsons/shortcutsdata.json", "w") as f:
         f.write(json_data)
 
+# like 90% sure this is bad for running smth every hour, and hogs a thread for way too much time, but it works
+# https://gist.github.com/allanfreitas/e2cd0ff49bbf7ddf1d85a3962d577dbf
+import time, traceback
 
+exits=0
+def every(delay, task):
+  next_time = time.time() + delay
+  while True:
+    time.sleep(max(0, next_time - time.time()))
+    try:
+      task()
+    except Exception:
+      traceback.print_exc()
+      # in production code you might want to have this instead of course:
+      # logger.exception("Problem while executing repetitive task.")
+    # skip tasks if we are behind schedule:
+    next_time += (time.time() - next_time) // delay * delay + delay
+
+def foo():
+    global sheets
+    print("fetching sheets")
+    sheets2 = fetch_dampt()
+    sheets2 += fetch_dpmms()
+    sheets = sheets2
+
+import threading
+task  = threading.Thread(target=lambda: every(60*60, foo))
+task.start()
+
+
+# try:
+#     loop.run_until_complete(task)
+# except asyncio.CancelledError:
+#     pass
 
 import discord
 import sys
@@ -86,6 +123,7 @@ def handler(signum, frame):
 
 # Register a handler (function) for the SIGTERM signal
 signal.signal(signal.SIGTERM, handler)
+# signal.signal(signal.SIGSTOP,handler)
 
 
 

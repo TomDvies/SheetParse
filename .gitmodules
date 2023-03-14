@@ -1,0 +1,3 @@
+[submodule "cmsfetch"]
+	path = cmsfetch
+	url = https://github.com/tomdvies/cmsfetch
