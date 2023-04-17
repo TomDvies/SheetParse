@@ -47,11 +47,11 @@ def get_start_end(doc,paper,question,part,year):
             if text[start[0] + len(startstr)].isnumeric():
                 continue
             ends = [ item for item in findall(text, endstr) if item>start[0]] # [start, end]
-            # print(startstr)
             if ends:
                 end = [ends[0], x]
             else:
                 end = [-1+-1*len(f"Part {part}, {year} List of Questions"),x]
+            print(text[start[0]:end[0]])
             return [start, end]
 
     end = [-1, len(doc) - 1]
@@ -68,9 +68,10 @@ def get_rects(start, end, page):
     rectdict = []
     for i, t2 in enumerate(textbits):
         # some sheets like vp, i hate this
-        t = t2.strip("Copyright © 2022 University of Cambridge. Not to be quoted or reproduced without permission.")
-        if page.search_for(t):
-            rectdict += page.search_for(t)
+        # t = t2.strip("Copyright © 2022 University of Cambridge. Not to be quoted or reproduced without permission.")
+        if page.search_for(t2):
+            rectdict += page.search_for(t2)
+    # print(rectdict)
     return rectdict
 
 
@@ -83,8 +84,10 @@ def fetch_tripos_question(paperarr, paper, question,part,year, debug=False) -> N
     # rectdict = page.search_for(text[start[0]:end[0]])
     for rectd in range(len(rectdict) - 1):
         rectdict[0].include_rect(rectdict[rectd + 1])
-    delta = fitz.Point(8, 3)
-    deltay = fitz.Point(0, 4)
-    rectf = fitz.Rect(rectdict[0].tl - delta - deltay, rectdict[0].br + delta)
+    delta = fitz.Point(8, 0)
+    deltay = fitz.Point(0, 5)
+    rectf = fitz.Rect(rectdict[0].tl - delta - deltay, rectdict[0].br + delta+deltay)
+    if debug:
+        return page.get_pixmap(clip=rectf, dpi=300).save("out.png")
     return page.get_pixmap(clip=rectf, dpi=300).tobytes()
 
