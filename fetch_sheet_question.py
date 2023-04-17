@@ -89,7 +89,7 @@ def get_rects(start, end, page):
     return rectdict
 
 
-def fetch_question(filepath: str, q: int, course, formats, debug=False) -> None:
+def fetch_sheet_question(filepath: str, q: int, course, formats, debug=False) -> None:
     doc = fitz.open(filepath)
     start, end = get_start_end(doc, q, course, formats)
     if debug:
@@ -156,31 +156,10 @@ def fetch_question(filepath: str, q: int, course, formats, debug=False) -> None:
         return src.tobytes()
 
 
-# other method, maybe better
-# def fetch_question_2(filepath: str, q: int, course, formats) -> None:
-#    print("fetching")
-#    # fuck sheet formatting, this allows for custom formats to be recognised, below is by far the most common
-#    startstr = f"\n{q}."
-#    endstr = f"\n{q + 1}."
-#    # if type == "grm":
-#    #    startstr = f"\n({q})"
-#    #    endstr = f"\n({q + 1})"
-#    for arr in formats:
-#       if course.lower() == arr[0].lower():
-#          print(f"newformat: {arr[1]}")
-#          startstr = arr[1].replace("questionnum", str(q))
-#          endstr = arr[1].replace("questionnum", str(q + 1))
-#
-#    doc:fitz.Document = fitz.open(filepath)
-#    for i, page in enumerate(doc):
-#       startrects = page.search_for(startstr)
-#       endrects  =  page.search_for(endstr)
-#
-#       print(endrects,startrects)
 
 if __name__ == "__main__":
     sheet = ['https://www.dpmms.cam.ac.uk/study/IB/GroupsRings+Modules/2022-2023/Example%20sheet%201.pdf', 'VP', 2]
     # print(fetch_dpmms.fetch_dpmms())
-    fetch_question(
+    fetch_sheet_question(
         "pdfs/aHR0cDovL3d3dy5kcG1tcy5jYW0uYWMudWsvc3R1ZHkvSUIvTGluZWFyQWxnZWJyYS8yMDIyLTIwMjMvbGluLWFsZy1leDItMjAyMi5wZGY=.pdf",
         7, "La", [], debug=True)
