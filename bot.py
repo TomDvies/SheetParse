@@ -202,7 +202,8 @@ async def on_message(message):
         embed = discord.Embed(title="Help:",
                               # description="Format requests as '?q IA 2011 2 II 12F'",
                               color=0x00ff00)
-        embed.add_field(name="?q:", value=str("help yourself"))
+        embed.add_field(name="?q:", value=str("coursename, sheetnum, questionnum"))
+        embed.add_field(name="?tq:", value=str("IA/IB/II (defaults to IB) year, paper, question"))
         await message.channel.send(embed=embed)
         return
     if message.content.startswith("?s"):
@@ -298,7 +299,7 @@ async def on_message(message):
         except Exception as e:
             print(e)
         embed = discord.Embed(color=0x00ff00)
-        embed.add_field(name="Something went wrong.", value=str("Format requests as '?q part(IA/IB/II) sheetnum questionnum'"))
+        embed.add_field(name="Something went wrong.", value=str("Format requests as '?q IA/IB/II (defaults to IB) year paper question'"))
         await message.channel.send(embed=embed)
         return
 
