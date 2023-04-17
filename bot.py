@@ -44,9 +44,6 @@ def parse_tripos_input(stin):
     elif "II" in components:
         course = "II"
         components.remove("II")
-    elif "2" in components:
-        course = "II"
-        components.remove("2")
     else:
         course = "IB"
     if "II" in components:
@@ -73,6 +70,7 @@ def get_tripos_image(searchstr):
     papersoptions = [paperarr for paperarr in papers if paperarr[1]==year and paperarr[2]==course and paperarr[3]=="All questions"]
     if papersoptions:
         paperarr = papersoptions[0]
+    print(paperarr, paper, question, course,year)
     img = fetch_tripos_question(paperarr, paper, question, course,year)
     return img, year, course,question
 
