@@ -46,11 +46,12 @@ def get_start_end(doc,paper,question,part,year):
                 continue
             if text[start[0] + len(startstr)].isnumeric():
                 continue
-            ends = [ item for item in findall(text, endstr) if item>start[0]] # [start, end]
+            ends = [ item for item in findall(text, endstr) if item>start[0]] + findall(text,f"Part {part}, {year}\nList of Questions")# [start, end]
+            print(ends)
             if ends:
                 end = [ends[0], x]
             else:
-                end = [-1+-1*len(f"Part {part}, {year} List of Questions"),x]
+                end = [-1,x]#+-1*len(f"Part {part}, {year} List of Questions"),x]
             print(text[start[0]:end[0]])
             return [start, end]
 
